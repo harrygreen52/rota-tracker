@@ -1,0 +1,1873 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Rota Tracker</title>
+
+<style>
+
+/* =========================================================
+   GENERAL
+   ========================================================= */
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 50px;
+    background: #f3f4f6;
+    font-family: Arial, Helvetica, sans-serif;
+    color: #1f2937;
+}
+
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+
+/* =========================================================
+   SELECTED DATE ROTA
+   ========================================================= */
+
+.today-section {
+    background: white;
+    border-radius: 14px;
+    padding: 28px;
+    margin-bottom: 25px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.10);
+    border: 3px solid #2563eb;
+    text-align: center;
+}
+
+.section-title {
+    font-size: 18px;
+    font-weight: bold;
+    color: #2563eb;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+}
+
+.today-date {
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 22px;
+}
+
+.shift-container {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.shift {
+    flex: 1;
+    min-width: 260px;
+    max-width: 400px;
+    padding: 22px;
+    border-radius: 12px;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.day-shift {
+    background: #fff7cc;
+    border: 2px solid #eab308;
+    color: #854d0e;
+}
+
+.night-shift {
+    background: #e0e7ff;
+    border: 2px solid #6366f1;
+    color: #3730a3;
+}
+
+.shift small {
+    display: block;
+    font-size: 14px;
+    font-weight: normal;
+    margin-top: 7px;
+    opacity: 0.8;
+}
+
+
+/* =========================================================
+   DATE CONTROLS
+   ========================================================= */
+
+.date-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+
+    margin-bottom: 15px;
+    padding: 15px;
+
+    background: white;
+    border-radius: 12px;
+
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.jump-label {
+    font-size: 14px;
+    font-weight: bold;
+    color: #374151;
+}
+
+.jump-date-input {
+    height: 40px;
+    padding: 0 10px;
+
+    border: 1px solid #d1d5db;
+    border-radius: 7px;
+
+    background: white;
+    color: #1f2937;
+
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 14px;
+
+    cursor: pointer;
+}
+
+.jump-date-input:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+}
+
+.jump-button,
+.current-month-button {
+    height: 40px;
+    padding: 0 16px;
+
+    border: none;
+    border-radius: 7px;
+
+    background: #2563eb;
+    color: white;
+
+    font-size: 14px;
+    font-weight: bold;
+
+    cursor: pointer;
+}
+
+.jump-button:hover,
+.current-month-button:hover {
+    background: #1d4ed8;
+}
+
+
+/* =========================================================
+   CALENDAR MENU
+   ========================================================= */
+
+.month-menu {
+    margin-bottom: 25px;
+}
+
+.month-menu summary {
+    background: #1f2937;
+    color: white;
+
+    padding: 18px 22px;
+
+    border-radius: 12px;
+
+    cursor: pointer;
+
+    font-size: 18px;
+    font-weight: bold;
+
+    list-style: none;
+    user-select: none;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    transition:
+        background 0.2s ease,
+        border-radius 0.2s ease;
+}
+
+.month-menu summary::-webkit-details-marker {
+    display: none;
+}
+
+.month-menu summary:hover {
+    background: #374151;
+}
+
+.month-menu[open] summary {
+    border-radius: 12px 12px 0 0;
+}
+
+.calendar-menu-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.menu-arrow {
+    font-size: 18px;
+    transition: transform 0.2s ease;
+}
+
+.month-menu[open] .menu-arrow {
+    transform: rotate(180deg);
+}
+
+
+/* =========================================================
+   MONTH CONTENT
+   ========================================================= */
+
+.month-content {
+    background: white;
+
+    border-radius: 0 0 12px 12px;
+
+    padding: 25px;
+
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+
+/* =========================================================
+   MONTH NAVIGATION
+   ========================================================= */
+
+.month-navigation {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 15px;
+
+    margin-bottom: 15px;
+}
+
+.month-title {
+    flex: 1;
+
+    text-align: center;
+
+    margin: 0;
+
+    font-size: 26px;
+}
+
+.month-button {
+    width: 46px;
+    height: 46px;
+
+    border: none;
+    border-radius: 8px;
+
+    background: #e5e7eb;
+    color: #1f2937;
+
+    font-size: 30px;
+    font-weight: bold;
+
+    cursor: pointer;
+
+    line-height: 1;
+}
+
+.month-button:hover {
+    background: #d1d5db;
+}
+
+
+/* =========================================================
+   CALENDAR
+   ========================================================= */
+
+.calendar {
+    width: 100%;
+}
+
+.calendar-header {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+
+    background: #1f2937;
+    color: white;
+
+    border-radius: 8px 8px 0 0;
+
+    overflow: hidden;
+}
+
+.calendar-weekday {
+    text-align: center;
+
+    padding: 12px 4px;
+
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.calendar-body {
+    display: grid;
+
+    grid-template-columns: repeat(7, 1fr);
+
+    border-left: 1px solid #d1d5db;
+    border-top: 1px solid #d1d5db;
+
+    border-radius: 0 0 8px 8px;
+
+    overflow: hidden;
+}
+
+.calendar-day {
+    min-height: 125px;
+
+    padding: 8px;
+
+    background: white;
+
+    border-right: 1px solid #d1d5db;
+    border-bottom: 1px solid #d1d5db;
+
+    cursor: pointer;
+
+    transition: background 0.15s ease;
+}
+
+.calendar-day:hover {
+    background: #f3f7ff;
+}
+
+.calendar-day.other-month {
+    background: #f9fafb;
+    color: #9ca3af;
+}
+
+
+/* =========================================================
+   SELECTED DATE
+   ========================================================= */
+
+.calendar-day.selected {
+    background: #dbeafe;
+
+    box-shadow:
+        inset 0 0 0 4px #2563eb;
+}
+
+.calendar-day.selected .date-number {
+    color: #1d4ed8;
+}
+
+
+/* =========================================================
+   DATE NUMBER
+   ========================================================= */
+
+.date-number {
+    font-size: 17px;
+    font-weight: bold;
+
+    margin-bottom: 8px;
+}
+
+
+/* =========================================================
+   ROTA BOXES
+   ========================================================= */
+
+.rota-box {
+    padding: 6px;
+
+    margin-bottom: 5px;
+
+    border-radius: 5px;
+
+    font-size: 13px;
+    font-weight: bold;
+
+    line-height: 1.2;
+}
+
+.rota-label {
+    display: block;
+
+    font-size: 10px;
+    font-weight: normal;
+
+    opacity: 0.75;
+
+    margin-bottom: 2px;
+}
+
+.rota-day {
+    background: #fff7cc;
+
+    color: #854d0e;
+
+    border-left: 3px solid #eab308;
+}
+
+.rota-night {
+    background: #eef2ff;
+
+    color: #3730a3;
+
+    border-left: 3px solid #6366f1;
+}
+
+
+/* =========================================================
+   NOTE
+   ========================================================= */
+
+.note {
+    color: #6b7280;
+
+    font-size: 13px;
+
+    margin-top: 15px;
+
+    line-height: 1.6;
+}
+
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+.footer {
+    text-align: center;
+
+    color: #6b7280;
+
+    font-size: 13px;
+
+    padding: 20px 10px;
+
+    margin-top: 10px;
+}
+
+.footer strong {
+    color: #374151;
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+    body {
+        padding: 15px;
+    }
+
+    .today-section {
+        padding: 22px 15px;
+    }
+
+    .today-date {
+        font-size: 23px;
+    }
+
+    .shift {
+        font-size: 20px;
+        min-width: 220px;
+    }
+
+    .month-content {
+        padding: 10px;
+        overflow-x: auto;
+    }
+
+    .month-title {
+        font-size: 21px;
+    }
+
+    .calendar {
+        min-width: 650px;
+    }
+
+    .calendar-day {
+        min-height: 105px;
+        padding: 5px;
+    }
+
+    .calendar-weekday {
+        font-size: 10px;
+        padding: 9px 2px;
+    }
+
+    .rota-box {
+        font-size: 10px;
+        padding: 5px 4px;
+    }
+
+    .rota-label {
+        font-size: 8px;
+    }
+
+    .date-controls {
+        justify-content: stretch;
+    }
+
+    .jump-label {
+        width: 100%;
+        text-align: center;
+    }
+
+    .jump-date-input {
+        flex: 1;
+        min-width: 150px;
+    }
+
+    .jump-button,
+    .current-month-button {
+        flex: 0 0 auto;
+    }
+
+}
+
+
+@media (max-width: 450px) {
+
+    body {
+        padding: 10px;
+    }
+
+    .today-date {
+        font-size: 20px;
+    }
+
+    .shift {
+        width: 100%;
+        min-width: 0;
+        font-size: 19px;
+    }
+
+    .jump-date-input {
+        width: 100%;
+        flex: none;
+    }
+
+    .jump-button,
+    .current-month-button {
+        width: 100%;
+    }
+
+}
+
+
+/* =========================================================
+   ACCESSIBILITY
+   ========================================================= */
+
+.month-menu summary:focus-visible,
+.month-button:focus-visible,
+.current-month-button:focus-visible,
+.jump-button:focus-visible,
+.jump-date-input:focus-visible,
+.calendar-day:focus-visible {
+
+    outline: 3px solid #60a5fa;
+    outline-offset: 2px;
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+<div class="container">
+
+
+<!-- =====================================================
+     SELECTED DATE ROTA
+     ====================================================== -->
+
+<section class="today-section">
+
+    <div class="section-title">
+        ROTA TRACKER
+    </div>
+
+    <div
+        class="today-date"
+        id="todayDate"
+    ></div>
+
+    <div class="shift-container">
+
+        <div class="shift day-shift">
+
+            ☀️ DAY —
+            <span id="todayDay"></span>
+
+            <small>
+                Day shift
+            </small>
+
+        </div>
+
+
+        <div class="shift night-shift">
+
+            🌙 NIGHT —
+            <span id="todayNight"></span>
+
+            <small>
+                Night shift
+            </small>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     DATE CONTROLS
+     
+     BOTH JUMP TO DATE AND TODAY ARE NOW OUTSIDE
+     THE CALENDAR DROPDOWN.
+     ====================================================== -->
+
+<div class="date-controls">
+
+    <span class="jump-label">
+        📅 JUMP TO DATE
+    </span>
+
+    <input
+        type="date"
+        id="jumpDate"
+        class="jump-date-input"
+        aria-label="Choose date"
+    >
+
+    <button
+        type="button"
+        id="jumpButton"
+        class="jump-button"
+    >
+        GO
+    </button>
+
+    <button
+        type="button"
+        id="currentMonth"
+        class="current-month-button"
+    >
+        📅 TODAY
+    </button>
+
+</div>
+
+
+<!-- =====================================================
+     CALENDAR DROPDOWN
+     ====================================================== -->
+
+<details
+    class="month-menu"
+    id="monthMenu"
+>
+
+    <summary>
+
+        <span class="calendar-menu-label">
+            📅 CALENDAR
+        </span>
+
+        <span class="menu-arrow">
+            ▼
+        </span>
+
+    </summary>
+
+
+    <div class="month-content">
+
+
+        <!-- =================================================
+             MONTH NAVIGATION
+             ================================================== -->
+
+        <div class="month-navigation">
+
+            <button
+                type="button"
+                class="month-button"
+                id="previousMonth"
+                aria-label="Previous month"
+            >
+                ‹
+            </button>
+
+
+            <h2
+                class="month-title"
+                id="monthTitle"
+            ></h2>
+
+
+            <button
+                type="button"
+                class="month-button"
+                id="nextMonth"
+                aria-label="Next month"
+            >
+                ›
+            </button>
+
+        </div>
+
+
+        <!-- =================================================
+             CALENDAR
+             ================================================== -->
+
+        <div class="calendar">
+
+            <div class="calendar-header">
+
+                <div class="calendar-weekday">
+                    SUN
+                </div>
+
+                <div class="calendar-weekday">
+                    MON
+                </div>
+
+                <div class="calendar-weekday">
+                    TUE
+                </div>
+
+                <div class="calendar-weekday">
+                    WED
+                </div>
+
+                <div class="calendar-weekday">
+                    THU
+                </div>
+
+                <div class="calendar-weekday">
+                    FRI
+                </div>
+
+                <div class="calendar-weekday">
+                    SAT
+                </div>
+
+            </div>
+
+
+            <div
+                class="calendar-body"
+                id="calendarBody"
+            ></div>
+
+        </div>
+
+
+        <div class="note">
+
+            Click any date to view that day's rota at the top.
+
+            <br>
+
+            The selected date is highlighted in blue.
+
+        </div>
+
+    </div>
+
+</details>
+
+</div>
+
+
+<!-- =====================================================
+     FOOTER
+     ====================================================== -->
+
+<footer class="footer">
+
+    Last reloaded:
+
+    <strong id="lastReloaded"></strong>
+
+</footer>
+
+
+<script>
+
+/* =========================================================
+   ROTA SETUP
+   ========================================================= */
+
+const REFERENCE_DATE =
+    new Date(2026, 9, 5);
+
+
+const ROTA_POSITIONS = {
+
+    "Rota 4": 0,
+    "Rota 3": 2,
+    "Rota 2": 4,
+    "Rota 1": 6
+
+};
+
+
+/* =========================================================
+   NAMES
+   ========================================================= */
+
+const dayNames = [
+
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday"
+
+];
+
+
+const monthNames = [
+
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December"
+
+];
+
+
+/* =========================================================
+   DATE FUNCTIONS
+   ========================================================= */
+
+function dateOnly(date) {
+
+    return new Date(
+
+        date.getFullYear(),
+        date.getMonth(),
+        date.getDate()
+
+    );
+
+}
+
+
+function daysBetween(date1, date2) {
+
+    const d1 =
+        dateOnly(date1);
+
+    const d2 =
+        dateOnly(date2);
+
+
+    const milliseconds =
+        d2.getTime() -
+        d1.getTime();
+
+
+    return Math.round(
+
+        milliseconds /
+        (1000 * 60 * 60 * 24)
+
+    );
+
+}
+
+
+/* =========================================================
+   GET SHIFT FOR ONE ROTA
+   ========================================================= */
+
+function getShiftForRota(
+    date,
+    rotaPosition
+) {
+
+    const difference =
+        daysBetween(
+            REFERENCE_DATE,
+            date
+        );
+
+
+    let position =
+        (
+            rotaPosition +
+            difference
+        ) % 8;
+
+
+    if (position < 0) {
+
+        position += 8;
+
+    }
+
+
+    if (
+        position === 0 ||
+        position === 1
+    ) {
+
+        return "DAY";
+
+    }
+
+
+    if (
+        position === 2 ||
+        position === 3
+    ) {
+
+        return "NIGHT";
+
+    }
+
+
+    return "OFF";
+
+}
+
+
+/* =========================================================
+   CALCULATE BOTH ROTAS
+   ========================================================= */
+
+function calculateRota(date) {
+
+    let dayRota = "—";
+    let nightRota = "—";
+
+
+    for (
+        const [rota, position]
+        of Object.entries(ROTA_POSITIONS)
+    ) {
+
+        const shift =
+            getShiftForRota(
+                date,
+                position
+            );
+
+
+        if (shift === "DAY") {
+
+            dayRota = rota;
+
+        }
+
+
+        if (shift === "NIGHT") {
+
+            nightRota = rota;
+
+        }
+
+    }
+
+
+    return {
+
+        day: dayRota,
+        night: nightRota
+
+    };
+
+}
+
+
+/* =========================================================
+   DATE FORMATTING
+   ========================================================= */
+
+function formatDate(date) {
+
+    const day =
+        String(
+            date.getDate()
+        ).padStart(2, "0");
+
+
+    const month =
+        String(
+            date.getMonth() + 1
+        ).padStart(2, "0");
+
+
+    const year =
+        date.getFullYear();
+
+
+    return (
+        day +
+        "/" +
+        month +
+        "/" +
+        year
+    );
+
+}
+
+
+function formatLongDate(date) {
+
+    return (
+
+        dayNames[
+            date.getDay()
+        ] +
+
+        " " +
+
+        formatDate(date)
+
+    );
+
+}
+
+
+/* =========================================================
+   SELECTED DATE
+   ========================================================= */
+
+let selectedDate =
+    dateOnly(
+        new Date()
+    );
+
+
+/* =========================================================
+   UPDATE TOP ROTA PANEL
+   ========================================================= */
+
+function updateSelectedDate() {
+
+    const result =
+        calculateRota(
+            selectedDate
+        );
+
+
+    document.getElementById(
+        "todayDate"
+    ).textContent =
+        formatLongDate(
+            selectedDate
+        );
+
+
+    document.getElementById(
+        "todayDay"
+    ).textContent =
+        result.day;
+
+
+    document.getElementById(
+        "todayNight"
+    ).textContent =
+        result.night;
+
+}
+
+
+/* =========================================================
+   CALENDAR STATE
+   ========================================================= */
+
+let calendarYear =
+    new Date().getFullYear();
+
+
+let calendarMonth =
+    new Date().getMonth();
+
+
+/* =========================================================
+   CHECK IF DATE IS SELECTED
+   ========================================================= */
+
+function isSelectedDate(date) {
+
+    return (
+
+        date.getFullYear() ===
+        selectedDate.getFullYear()
+
+        &&
+
+        date.getMonth() ===
+        selectedDate.getMonth()
+
+        &&
+
+        date.getDate() ===
+        selectedDate.getDate()
+
+    );
+
+}
+
+
+/* =========================================================
+   CREATE DATE KEY
+   ========================================================= */
+
+function getDateKey(date) {
+
+    return (
+
+        date.getFullYear() +
+        "-" +
+        String(
+            date.getMonth() + 1
+        ).padStart(2, "0") +
+        "-" +
+        String(
+            date.getDate()
+        ).padStart(2, "0")
+
+    );
+
+}
+
+
+/* =========================================================
+   DRAW CALENDAR
+   ========================================================= */
+
+function drawCalendar() {
+
+    const title =
+        document.getElementById(
+            "monthTitle"
+        );
+
+
+    const body =
+        document.getElementById(
+            "calendarBody"
+        );
+
+
+    const firstDay =
+        new Date(
+            calendarYear,
+            calendarMonth,
+            1
+        );
+
+
+    const startingDay =
+        firstDay.getDay();
+
+
+    const daysInMonth =
+        new Date(
+            calendarYear,
+            calendarMonth + 1,
+            0
+        ).getDate();
+
+
+    const daysInPreviousMonth =
+        new Date(
+            calendarYear,
+            calendarMonth,
+            0
+        ).getDate();
+
+
+    title.textContent =
+
+        monthNames[
+            calendarMonth
+        ] +
+
+        " " +
+
+        calendarYear;
+
+
+    body.innerHTML = "";
+
+
+    for (
+        let i = 0;
+        i < 42;
+        i++
+    ) {
+
+        let date;
+
+        let otherMonth = false;
+
+
+        /* Previous month */
+
+        if (
+            i < startingDay
+        ) {
+
+            date =
+                new Date(
+
+                    calendarYear,
+
+                    calendarMonth - 1,
+
+                    daysInPreviousMonth -
+                    startingDay +
+                    i +
+                    1
+
+                );
+
+
+            otherMonth = true;
+
+        }
+
+
+        /* Current month */
+
+        else if (
+
+            i <
+            startingDay +
+            daysInMonth
+
+        ) {
+
+            date =
+                new Date(
+
+                    calendarYear,
+
+                    calendarMonth,
+
+                    i -
+                    startingDay +
+                    1
+
+                );
+
+        }
+
+
+        /* Next month */
+
+        else {
+
+            date =
+                new Date(
+
+                    calendarYear,
+
+                    calendarMonth + 1,
+
+                    i -
+                    startingDay -
+                    daysInMonth +
+                    1
+
+                );
+
+
+            otherMonth = true;
+
+        }
+
+
+        /* Create cell */
+
+        const cell =
+            document.createElement(
+                "div"
+            );
+
+
+        cell.className =
+            "calendar-day";
+
+
+        if (otherMonth) {
+
+            cell.classList.add(
+                "other-month"
+            );
+
+        }
+
+
+        /* Selected date */
+
+        if (
+            isSelectedDate(date)
+        ) {
+
+            cell.classList.add(
+                "selected"
+            );
+
+        }
+
+
+        cell.setAttribute(
+            "tabindex",
+            "0"
+        );
+
+
+        cell.setAttribute(
+            "role",
+            "button"
+        );
+
+
+        cell.setAttribute(
+            "aria-label",
+            "Select " +
+            formatLongDate(date)
+        );
+
+
+        /* Date number */
+
+        const dateNumber =
+            document.createElement(
+                "div"
+            );
+
+
+        dateNumber.className =
+            "date-number";
+
+
+        dateNumber.textContent =
+            date.getDate();
+
+
+        cell.appendChild(
+            dateNumber
+        );
+
+
+        /* Calculate rota */
+
+        const result =
+            calculateRota(date);
+
+
+        /* DAY */
+
+        const dayBox =
+            document.createElement(
+                "div"
+            );
+
+
+        dayBox.className =
+            "rota-box rota-day";
+
+
+        dayBox.innerHTML =
+
+            "<span class='rota-label'>" +
+            "☀️ DAY" +
+            "</span>" +
+
+            (
+                result.day === "—"
+                ? "OFF"
+                : result.day
+            );
+
+
+        cell.appendChild(
+            dayBox
+        );
+
+
+        /* NIGHT */
+
+        const nightBox =
+            document.createElement(
+                "div"
+            );
+
+
+        nightBox.className =
+            "rota-box rota-night";
+
+
+        nightBox.innerHTML =
+
+            "<span class='rota-label'>" +
+            "🌙 NIGHT" +
+            "</span>" +
+
+            (
+                result.night === "—"
+                ? "OFF"
+                : result.night
+            );
+
+
+        cell.appendChild(
+            nightBox
+        );
+
+
+        /* Click */
+
+        cell.addEventListener(
+            "click",
+            function() {
+
+                selectDate(date);
+
+            }
+        );
+
+
+        /* Keyboard */
+
+        cell.addEventListener(
+            "keydown",
+            function(event) {
+
+                if (
+
+                    event.key === "Enter" ||
+                    event.key === " "
+
+                ) {
+
+                    event.preventDefault();
+
+                    selectDate(date);
+
+                }
+
+            }
+        );
+
+
+        body.appendChild(
+            cell
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   SELECT DATE
+   ========================================================= */
+
+function selectDate(date) {
+
+    selectedDate =
+        dateOnly(date);
+
+
+    updateSelectedDate();
+
+
+    calendarYear =
+        selectedDate.getFullYear();
+
+
+    calendarMonth =
+        selectedDate.getMonth();
+
+
+    document.getElementById(
+        "jumpDate"
+    ).value =
+        getDateKey(
+            selectedDate
+        );
+
+
+    drawCalendar();
+
+}
+
+
+/* =========================================================
+   JUMP TO DATE
+   ========================================================= */
+
+function jumpToDate() {
+
+    const input =
+        document.getElementById(
+            "jumpDate"
+        );
+
+
+    if (!input.value) {
+
+        return;
+
+    }
+
+
+    const parts =
+        input.value.split("-");
+
+
+    const year =
+        Number(parts[0]);
+
+
+    const month =
+        Number(parts[1]) - 1;
+
+
+    const day =
+        Number(parts[2]);
+
+
+    const date =
+        new Date(
+            year,
+            month,
+            day
+        );
+
+
+    selectDate(date);
+
+}
+
+
+/* =========================================================
+   GO TO TODAY
+   ========================================================= */
+
+function goToToday() {
+
+    const today =
+        dateOnly(
+            new Date()
+        );
+
+
+    selectedDate =
+        today;
+
+
+    calendarYear =
+        today.getFullYear();
+
+
+    calendarMonth =
+        today.getMonth();
+
+
+    document.getElementById(
+        "jumpDate"
+    ).value =
+        getDateKey(today);
+
+
+    updateSelectedDate();
+
+    drawCalendar();
+
+}
+
+
+/* =========================================================
+   LAST RELOADED
+   ========================================================= */
+
+function updateLastReloaded() {
+
+    const now =
+        new Date();
+
+
+    const date =
+
+        String(
+            now.getDate()
+        ).padStart(2, "0") +
+
+        "/" +
+
+        String(
+            now.getMonth() + 1
+        ).padStart(2, "0") +
+
+        "/" +
+
+        now.getFullYear();
+
+
+    const time =
+
+        String(
+            now.getHours()
+        ).padStart(2, "0") +
+
+        ":" +
+
+        String(
+            now.getMinutes()
+        ).padStart(2, "0") +
+
+        ":" +
+
+        String(
+            now.getSeconds()
+        ).padStart(2, "0");
+
+
+    document.getElementById(
+        "lastReloaded"
+    ).textContent =
+
+        date +
+        " at " +
+        time;
+
+}
+
+
+/* =========================================================
+   INITIALISE
+   ========================================================= */
+
+updateSelectedDate();
+
+drawCalendar();
+
+updateLastReloaded();
+
+
+document.getElementById(
+    "jumpDate"
+).value =
+    getDateKey(
+        selectedDate
+    );
+
+
+/* =========================================================
+   PREVIOUS MONTH
+   ========================================================= */
+
+document.getElementById(
+    "previousMonth"
+).addEventListener(
+    "click",
+    function(event) {
+
+        event.preventDefault();
+
+
+        calendarMonth--;
+
+
+        if (
+            calendarMonth < 0
+        ) {
+
+            calendarMonth = 11;
+
+            calendarYear--;
+
+        }
+
+
+        drawCalendar();
+
+    }
+);
+
+
+/* =========================================================
+   NEXT MONTH
+   ========================================================= */
+
+document.getElementById(
+    "nextMonth"
+).addEventListener(
+    "click",
+    function(event) {
+
+        event.preventDefault();
+
+
+        calendarMonth++;
+
+
+        if (
+            calendarMonth > 11
+        ) {
+
+            calendarMonth = 0;
+
+            calendarYear++;
+
+        }
+
+
+        drawCalendar();
+
+    }
+);
+
+
+/* =========================================================
+   TODAY BUTTON
+   ========================================================= */
+
+document.getElementById(
+    "currentMonth"
+).addEventListener(
+    "click",
+    function(event) {
+
+        event.preventDefault();
+
+        goToToday();
+
+    }
+);
+
+
+/* =========================================================
+   JUMP BUTTON
+   ========================================================= */
+
+document.getElementById(
+    "jumpButton"
+).addEventListener(
+    "click",
+    function(event) {
+
+        event.preventDefault();
+
+        jumpToDate();
+
+    }
+);
+
+
+/* =========================================================
+   ENTER IN DATE FIELD
+   ========================================================= */
+
+document.getElementById(
+    "jumpDate"
+).addEventListener(
+    "keydown",
+    function(event) {
+
+        if (
+            event.key === "Enter"
+        ) {
+
+            event.preventDefault();
+
+            jumpToDate();
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   WHEN CALENDAR OPENS
+   ========================================================= */
+
+document.getElementById(
+    "monthMenu"
+).addEventListener(
+    "toggle",
+    function() {
+
+        if (this.open) {
+
+            drawCalendar();
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   AUTOMATIC UPDATES
+   ========================================================= */
+
+setInterval(
+    function() {
+
+        updateLastReloaded();
+
+        /*
+         * Keep the selected date.
+         */
+
+        updateSelectedDate();
+
+        drawCalendar();
+
+    },
+    60000
+);
+
+</script>
+
+</body>
+
+</html>
